@@ -2,8 +2,13 @@ from selenium import webdriver
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.common.by import By
 from time import sleep
-from selenium.webdriver.common.keys import Keys
 
+def create_driver() -> webdriver:
+    """ Returns the webdriver through which we interact with the browser"""
+
+    service = Service(executable_path="geckodriver.exe")
+    driver = webdriver.Firefox(service=service)
+    return driver
 
 
 def enter_credentials(driver: webdriver, username:str, password:str):
@@ -16,7 +21,7 @@ def enter_credentials(driver: webdriver, username:str, password:str):
     password_field = driver.find_element(By.NAME, "password")
     password_field.send_keys(password)
 
-    sleep(2)
+    sleep(2) # time delay
 
 
 def attempt_login(driver:webdriver):
@@ -24,13 +29,3 @@ def attempt_login(driver:webdriver):
 
      driver.find_element(By.ID, "login").click()
      sleep(2)
-
-
-def create_driver() -> webdriver:
-    """ Returns the webdriver through which we interact with the browser"""
-
-    service = Service(executable_path="geckodriver.exe")
-    driver = webdriver.Firefox(service=service)
-    return driver
-      
-

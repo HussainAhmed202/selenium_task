@@ -1,63 +1,66 @@
 import unittest
 import myScript
+from user import getUser
 
 class TestLogin(unittest.TestCase):
 
     def setUp(self):
-        self.URL = "http://127.0.0.1:5000"
+         """ This function sets up the test suite by creating a new instance of the 
+            WebDriver and navigating to the base URL.  """
+         
+         self.valid_user = getUser()
 
-        print("Inside set up")
-        self.driver = myScript.create_driver()
-        self.driver.get(self.URL)
+         print("Inside set up")
+         self.driver = myScript.create_driver()
+         self.driver.get("http://127.0.0.1:5000")
 
     def test_valid_login(self):
-        print("Inside test valid login")
+        print("Testing valid login attempt...")
 
-        valid_username = "hussain"
-        valid_password = "password"
-
-        myScript.enter_credentials(self.driver, valid_username, valid_password)
+        myScript.enter_credentials(self.driver, self.valid_user.username ,self.valid_user.password)
         myScript.attempt_login(self.driver)
         self.assertEqual(self.driver.current_url, "http://127.0.0.1:5000/home" ) 
         
     def test_invalid_user(self):
-        print("Inside test invalid user")
+        print("Testing invalid user login attempt")
 
-        invalid_username = "abc"
+        invalid_username = "abc$%"
         invalid_password = "123"
 
         myScript.enter_credentials(self.driver, invalid_username, invalid_password)
         myScript.attempt_login(self.driver)
-        self.assertEqual(self.driver.current_url,"http://127.0.0.1:5000/" ) 
-        
-    
-    def test_missing_user(self):
-        print("Inside test missing user")
+        self.assertEqual(self.driver.current_url,"http://127.0.0.1:5000/" )
 
-        missing_username = ""
-        invalid_password = "123"
 
-        myScript.enter_credentials(self.driver, missing_username, invalid_password)
+    def test_invalid_password(self):
+        print("Testing invalid password  condition")
+
+        invalid_password = "hello"
+
+        myScript.enter_credentials(self.driver, self.valid_user.username, invalid_password)
         myScript.attempt_login(self.driver)
-        self.assertEqual(self.driver.current_url,"http://127.0.0.1:5000/" ) 
+        self.assertEqual(self.driver.current_url,"http://127.0.0.1:5000/" )
         
-    
-    def test_missing_password(self):
-        print("Inside test missing user")
 
-        missing_username = "hi"
-        missing_password = ""
+    def test_invalid_username(self):
+        print("Testing invalid username condition")
 
-        myScript.enter_credentials(self.driver, missing_username, missing_password)
+        invalid_username = "wronguser"
+        
+        myScript.enter_credentials(self.driver, invalid_username, self.valid_user.password)
         myScript.attempt_login(self.driver)
-        self.assertEqual(self.driver.current_url,"http://127.0.0.1:5000/" ) 
-        
-       
+        self.assertEqual(self.driver.current_url,"http://127.0.0.1:5000/" )
+         
+
+
 
     def tearDown(self):
         print("Inside tear down")
         self.driver.quit()
 
 
-unittest.main()
+
+ 
+if __name__ == "__main__":
+    unittest.main()
 
